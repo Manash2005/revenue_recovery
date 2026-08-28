@@ -1,0 +1,802 @@
+[
+  {
+    "event_id": "evt_0001",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0002",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0003",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0004",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0005",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0006",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0007",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0008",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0009",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0010",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0011",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0012",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0013",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0014",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0015",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0016",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0017",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0018",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0019",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0020",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0021",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0022",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0023",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0024",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0025",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0026",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0027",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0028",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0029",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0030",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0031",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0032",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0033",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0034",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0035",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0036",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0037",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0038",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0039",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0040",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0041",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0042",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0043",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0044",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0045",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0046",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0047",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0048",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0049",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0050",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0051",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0052",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0053",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0054",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0055",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0056",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0057",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0058",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0059",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0060",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0061",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0062",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0063",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0064",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0065",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0066",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0067",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0068",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0069",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0070",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0071",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0072",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0073",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0074",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0075",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0076",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0077",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0078",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0079",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0080",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0081",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0082",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0083",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0084",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0085",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0086",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0087",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0088",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0089",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0090",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0091",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0092",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0093",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0094",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0095",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0096",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0097",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0098",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0099",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0100",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0101",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0102",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0103",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0104",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0105",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0106",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0107",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0108",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0109",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0110",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0111",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0112",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0113",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0114",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0115",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0116",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0117",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0118",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0119",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0120",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0121",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0122",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0123",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0124",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0125",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0126",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0127",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0128",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0129",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0130",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0131",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0132",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0133",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0134",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0135",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0136",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0137",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0138",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0139",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0140",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0141",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0142",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0143",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0144",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0145",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0146",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0147",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0148",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0149",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0150",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0151",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0152",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0153",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0154",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0155",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0156",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0157",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0158",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0159",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0160",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0161",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0162",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0163",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0164",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0165",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0166",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0167",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0168",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0169",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0170",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0171",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0172",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0173",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0174",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0175",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0176",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0177",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0178",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0179",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0180",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0181",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0182",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0183",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0184",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0185",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0186",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0187",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0188",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0189",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0190",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0191",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0192",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0193",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0194",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0195",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0196",
+    "ground_truth_action": "escalate_to_human"
+  },
+  {
+    "event_id": "evt_0197",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0198",
+    "ground_truth_action": "retry"
+  },
+  {
+    "event_id": "evt_0199",
+    "ground_truth_action": "send_reminder"
+  },
+  {
+    "event_id": "evt_0200",
+    "ground_truth_action": "escalate_to_human"
+  }
+]

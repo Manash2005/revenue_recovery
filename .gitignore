@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Environment
+.env
+
+# SQLite and generated data
+data/*.db
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# OS and editor
+.DS_Store
+.vscode/

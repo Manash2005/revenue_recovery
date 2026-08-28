@@ -1,0 +1,1 @@
+"""Deterministic guardrails and stopping rules."""

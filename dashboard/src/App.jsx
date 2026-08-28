@@ -1,0 +1,1 @@
+/** Root dashboard component placeholder. */
