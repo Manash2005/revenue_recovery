@@ -7,19 +7,39 @@ from datetime import datetime
 #Event Schemas
 
 class PaymentFailedEvent(BaseModel):
-    """ Event that triggers the revenue recovery workflow. """
+    """Event that triggers the revenue recovery workflow."""
 
-    event_id : str = Field(min_length=1)
-    event_type : Literal["payment_failed"] = "payment_failed"
-    timestamp : datetime
+    event_id: str = Field(min_length=1)
 
-    customer_id : str = Field(min_length=1)
-    payment_id : str = Field(min_length=1)
+    event_type: Literal["payment_failed"] = "payment_failed"
 
-    amount : float = Field(gt=0)
-    currency : str = Field(min_length=3, max_length=3)
+    timestamp: datetime
 
-    failure_reason : str = Field(min_length=1)
+    customer_id: str = Field(min_length=1)
+
+    payment_id: str = Field(min_length=1)
+
+    amount: float = Field(gt=0)
+
+    currency: str = Field(
+        min_length=3,
+        max_length=3,
+    )
+
+    failure_reason: str = Field(min_length=1)
+
+    retry_count: int | None = Field(
+        default=None,
+        ge=0,
+    )
+
+    max_retries: int = Field(
+        ge=0,
+    )
+
+    customer_history_depth: int = Field(
+        ge=0,
+    )
 
 
 #Decision Schema
@@ -79,6 +99,8 @@ class AuditRecord(BaseModel):
 
     rule_override : RuleOverride | None = None
 
+    amount: float = Field(gt=0)
+
     human_review_required : bool
 
 #Metrics Schema
@@ -113,3 +135,16 @@ class ClassificationMetrics(BaseModel):
     false_negative_cost: float = Field(
         ge=0.0
     )
+
+class AgentResult(BaseModel):
+    """Complete result of one agent execution."""
+
+    llm_proposal: RecoveryDecision
+
+    final_decision: RecoveryDecision
+
+    tool_calls: list[ToolCallRecord]
+
+    rule_override: RuleOverride | None = None
+
+    human_review_required: bool = False

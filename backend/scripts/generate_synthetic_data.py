@@ -11,7 +11,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from backend.app.agent.rules import evaluate_guardrails
 from backend.app.models.db_models import create_tables, insert_event
+from backend.app.models.schemas import RecoveryDecision
 
 
 # =========================================================
@@ -155,37 +157,40 @@ def calculate_ground_truth(
     the independent answer key.
 
     IMPORTANT:
-    The LLM does NOT generate this label.
+    This must mirror the actual guardrails used by the runtime.
     """
 
-    # Rule 1:
-    # Maximum retries reached.
+    # Start from the same business-rule baseline used by the agent.
     if retry_count >= MAX_RETRIES:
-        return "escalate_to_human"
+        baseline_action = "escalate_to_human"
+    elif amount > 1000:
+        baseline_action = "escalate_to_human"
+    elif history_depth == 0:
+        baseline_action = "send_reminder"
+    elif failure_reason == "insufficient_funds":
+        baseline_action = "send_reminder"
+    elif failure_reason == "network_error":
+        baseline_action = "retry"
+    else:
+        baseline_action = "retry"
 
-    # Rule 2:
-    # High-value transaction requires human review.
-    if amount > 1000:
-        return "escalate_to_human"
+    decision = RecoveryDecision(
+        action=baseline_action,
+        reasoning="Synthetic ground-truth label derived from the same recovery rules.",
+        confidence=1.0,
+    )
 
-    # Rule 3:
-    # Very limited customer history.
-    if history_depth == 0:
-        return "send_reminder"
+    final_decision = evaluate_guardrails(
+        {
+            "retry_count": retry_count,
+            "max_retries": MAX_RETRIES,
+            "amount": amount,
+            "customer_history_depth": history_depth,
+        },
+        decision,
+    )
 
-    # Rule 4:
-    # Insufficient funds may be temporary.
-    if failure_reason == "insufficient_funds":
-        return "send_reminder"
-
-    # Rule 5:
-    # Network errors are reasonable retry candidates.
-    if failure_reason == "network_error":
-        return "retry"
-
-    # Rule 6:
-    # Other failures can be retried while below the limit.
-    return "retry"
+    return final_decision.action
 
 
 # =========================================================
