@@ -269,32 +269,55 @@ export default function MetricsPanel() {
   const totalAB = Object.values(action_breakdown).reduce((s, v) => s + v, 0);
   const fpColor = fpPct < 5 ? "var(--color-green)" : "var(--color-amber)";
 
+  const precisionPct = classification.precision * 100;
+  const recallPct = classification.recall * 100;
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 pb-10">
 
-      {/* ── Row 1 ───────────────────────────────────────────────── */}
-      <div className="grid gap-5" style={{ gridTemplateColumns: "2.4fr 0.8fr 0.8fr 1.1fr" }}>
-
+      {/* ── Row 1: Primary Metrics ───────────────────────────────────────────────── */}
+      <div className="grid gap-5" style={{ gridTemplateColumns: "1.8fr 1fr 1fr" }}>
+        
         {/* Hero */}
-        <Panel className="flex flex-col">
-          <StatLabel>Estimated Revenue Recovered</StatLabel>
-          <HeroNumber value={revenue_recovered} />
-          <div className="flex items-center gap-4 mt-4 flex-wrap">
-            <span
-              className="text-xs font-medium px-3 py-1 rounded-full"
-              style={{ background: "rgba(255,255,255,0.07)", color: "var(--color-muted)" }}
-            >
-              {total_events} events processed
-            </span>
-            <span className="text-sm" style={{ color: "var(--color-muted)" }}>
-              Precision {(classification.precision * 100).toFixed(1)}% &nbsp;·&nbsp;
-              Recall {(classification.recall * 100).toFixed(1)}% &nbsp;·&nbsp;
-              F1 {(classification.f1_score * 100).toFixed(1)}%
-            </span>
+        <Panel className="flex flex-col justify-between">
+          <div>
+            <StatLabel>Estimated Revenue Recovered</StatLabel>
+            <HeroNumber value={revenue_recovered} />
           </div>
-          <CMStrip classification={classification} />
+          <div className="mt-6">
+            <CMStrip classification={classification} />
+          </div>
         </Panel>
 
+        {/* Precision */}
+        <Panel className="flex flex-col">
+          <StatLabel>Model Precision</StatLabel>
+          <AnimPct value={precisionPct} color={precisionPct >= 90 ? "var(--color-green)" : "var(--color-accent)"} />
+          <div className="mt-auto pt-4 flex flex-col gap-2">
+            <Bar pct={precisionPct} color={precisionPct >= 90 ? "var(--color-green)" : "var(--color-accent)"} delay={400} />
+            <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
+              How often the model is correct when it decides to act. High precision ensures we don't spam customers.
+            </p>
+          </div>
+        </Panel>
+
+        {/* Recall */}
+        <Panel className="flex flex-col">
+          <StatLabel>Model Recall</StatLabel>
+          <AnimPct value={recallPct} color={recallPct >= 90 ? "var(--color-green)" : "var(--color-accent)"} />
+          <div className="mt-auto pt-4 flex flex-col gap-2">
+            <Bar pct={recallPct} color={recallPct >= 90 ? "var(--color-green)" : "var(--color-accent)"} delay={600} />
+            <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
+              How much of the total recoverable revenue the model successfully identified. 
+            </p>
+          </div>
+        </Panel>
+
+      </div>
+
+      {/* ── Row 2: Event Stats ───────────────────────────────────────────────── */}
+      <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 1fr 1.3fr" }}>
+        
         {/* Total events */}
         <Panel className="flex flex-col">
           <StatLabel>Total Events</StatLabel>
@@ -322,17 +345,10 @@ export default function MetricsPanel() {
         {/* FP rate */}
         <Panel className="flex flex-col">
           <StatLabel>False-Positive Rate</StatLabel>
-          <AnimPct value={fpPct} color={fpColor} />
-          <div className="mt-auto pt-4 flex flex-col gap-2">
-            <Bar pct={fpPct} color={fpColor} delay={400} />
-            <p className="text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
-              {fpCount} customer{fpCount !== 1 ? "s" : ""} escalated who would have self-resolved
-              {fpCost > 0 && (
-                <> — <span style={{ color: "var(--color-amber)" }}>₹{fmt(fpCost)} cost exposure</span></>
-              )}
-            </p>
+          <div className="flex items-end gap-3 mt-2">
+            <AnimPct value={fpPct} color={fpColor} />
             <span
-              className="text-xs font-semibold px-3 py-1 rounded-full self-start"
+              className="text-xs font-semibold px-3 py-1 mb-1 rounded-full whitespace-nowrap"
               style={fpPct < 5
                 ? { background: "rgba(62,207,142,0.12)", color: "var(--color-green)" }
                 : { background: "rgba(240,169,82,0.12)", color: "var(--color-amber)" }
@@ -341,11 +357,16 @@ export default function MetricsPanel() {
               {fpPct < 5 ? "On target — below 5%" : "Above 5% target"}
             </span>
           </div>
+          <p className="text-sm leading-relaxed mt-4 pt-4" style={{ color: "var(--color-muted)", borderTop: "1px solid var(--color-border-light)" }}>
+            {fpCount} customer{fpCount !== 1 ? "s" : ""} escalated who would have self-resolved
+            {fpCost > 0 && (
+              <> — <span style={{ color: "var(--color-amber)" }}>₹{fmt(fpCost)} cost exposure</span></>
+            )}
+          </p>
         </Panel>
-
       </div>
 
-      {/* ── Row 2 ───────────────────────────────────────────────── */}
+      {/* ── Row 3: Breakdown ───────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-5" style={{ gridTemplateColumns: "1fr 1.6fr" }}>
         <ActionBreakdown breakdown={action_breakdown} total={totalAB} />
         <OverridePanel count={rule_override_count} />

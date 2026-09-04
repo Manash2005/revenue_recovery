@@ -1,84 +1,115 @@
 import React from "react";
 
 const STEPS = [
-  { num: "01", label: "Payment Event",  detail: "payment_failed webhook ingested and stored in SQLite",                           color: "var(--color-accent)" },
-  { num: "02", label: "Tool Calls",     detail: "get_customer_history · get_retry_attempts · get_payment_failure_info",           color: "#a78bfa"             },
-  { num: "03", label: "LLM Proposes",   detail: "Returns action + reasoning + confidence score (0 – 1)",                          color: "var(--color-text)"   },
-  { num: "04", label: "Rules Gate",     detail: "MAX_RETRIES · HIGH_VALUE · INSUFFICIENT_HISTORY",                                color: "var(--color-amber)"  },
-  { num: "05", label: "Action Taken",   detail: "retry · send_reminder · escalate_to_human · stop_pursuing",                     color: "var(--color-green)"  },
-  { num: "06", label: "Audit Logged",   detail: "Full record: proposal + override (if any) + final action",                       color: "var(--color-muted)"  },
+  {
+    num: "01",
+    label: "Payment Event Ingested",
+    detail: "A payment_failed webhook is ingested and stored in the SQLite database.",
+    color: "var(--color-accent)",
+    bg: "rgba(79,142,247,0.08)",
+  },
+  {
+    num: "02",
+    label: "Context Gathering (Tool Calls)",
+    detail: "The agent fetches customer history, retry attempts, and payment failure details from read-only backend services.",
+    color: "#a78bfa",
+    bg: "rgba(167,139,250,0.08)",
+  },
+  {
+    num: "03",
+    label: "LLM Decision Engine",
+    detail: "The LLM evaluates the context and returns a structured action (retry, send_reminder, escalate_to_human, stop_pursuing) with a confidence score and reasoning.",
+    color: "var(--color-text)",
+    bg: "rgba(255,255,255,0.05)",
+  },
+  {
+    num: "04",
+    label: "Deterministic Rules Gate",
+    detail: "The proposed action must pass strict guardrails (MAX_RETRIES, HIGH_VALUE, INSUFFICIENT_HISTORY). If a rule fires, it overrides the LLM proposal.",
+    color: "var(--color-amber)",
+    bg: "rgba(240,169,82,0.08)",
+  },
+  {
+    num: "05",
+    label: "Action Execution",
+    detail: "The final, validated action is executed. Invalid actions never reach the customer.",
+    color: "var(--color-green)",
+    bg: "rgba(62,207,142,0.08)",
+  },
+  {
+    num: "06",
+    label: "Audit Trail Logging",
+    detail: "Every outcome is permanently recorded with the LLM reasoning, the rule override (if any), and the final action executed, ensuring total explainability.",
+    color: "var(--color-muted)",
+    bg: "rgba(122,143,168,0.08)",
+  },
 ];
 
-const panel = {
-  background: "var(--color-panel)",
-  border: "1px solid var(--color-border)",
-  borderRadius: "var(--radius-md)",
-  boxShadow: "var(--shadow-panel)",
-  backdropFilter: "blur(20px)",
-  padding: "1.75rem",
-};
+function Arrow() {
+  return (
+    <div className="flex justify-center my-1" style={{ opacity: 0.4 }}>
+      <svg width="24" height="40" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 4L12 36M12 36L6 30M12 36L18 30"
+          stroke="var(--color-muted)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
 
 export default function ArchitectureFlow() {
   return (
-    <div>
-      <div
-        className="text-xs font-semibold uppercase tracking-widest mb-4"
-        style={{ color: "var(--color-muted)" }}
-      >
-        Architecture Snapshot
+    <div className="max-w-3xl mx-auto w-full pb-10">
+      <div className="flex flex-col gap-2 mb-10 text-center">
+        <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--color-muted)" }}>
+          System Architecture
+        </div>
+        <h2 className="text-2xl font-bold" style={{ fontFamily: "var(--font-serif)", color: "var(--color-text)" }}>
+          Bounded AI Execution Pipeline
+        </h2>
+        <p className="text-sm mt-2" style={{ color: "var(--color-muted)" }}>
+          How events are safely processed, gated by rules, and audited for complete observability.
+        </p>
       </div>
 
-      {/* Step flow */}
-      <div
-        className="flex overflow-x-auto"
-        style={{ borderRadius: "var(--radius-md)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-panel)" }}
-      >
-        {STEPS.map((step, i) => (
-          <div
-            key={step.num}
-            className="flex flex-col items-center text-center flex-1"
-            style={{
-              minWidth: "120px",
-              padding: "1.5rem 1rem",
-              background: "var(--color-panel)",
-              backdropFilter: "blur(16px)",
-              borderRight: i < STEPS.length - 1 ? "1px solid var(--color-border-light)" : "none",
-            }}
-          >
-            <div className="text-xs font-bold tracking-widest mb-1" style={{ color: step.color, opacity: 0.7 }}>
-              {step.num}
+      <div className="flex flex-col items-center">
+        {STEPS.map((step, index) => (
+          <React.Fragment key={step.num}>
+            <div
+              className="w-full flex items-start p-6 relative transition-transform duration-200 hover:-translate-y-1"
+              style={{
+                background: "var(--color-panel)",
+                border: "1px solid var(--color-border)",
+                borderLeft: `4px solid ${step.color}`,
+                borderRadius: "var(--radius-md)",
+                boxShadow: "var(--shadow-panel)",
+                backdropFilter: "blur(20px)",
+              }}
+            >
+              <div
+                className="w-12 h-12 flex items-center justify-center rounded-full mr-5 flex-shrink-0"
+                style={{ background: step.bg, color: step.color, border: `1px solid ${step.color}40` }}
+              >
+                <span className="text-base font-bold font-mono tracking-tighter">{step.num}</span>
+              </div>
+              <div className="flex flex-col gap-1.5 pt-1 text-left">
+                <span className="text-lg font-bold" style={{ color: step.color }}>
+                  {step.label}
+                </span>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--color-text)", opacity: 0.8 }}>
+                  {step.detail}
+                </p>
+              </div>
             </div>
-            <div className="text-sm font-semibold mb-1.5" style={{ color: step.color }}>
-              {step.label}
-            </div>
-            <div className="text-xs leading-relaxed" style={{ color: "var(--color-muted)", maxWidth: "110px" }}>
-              {step.detail}
-            </div>
-          </div>
+
+            {/* Arrow connecting the cards (skip after the last card) */}
+            {index < STEPS.length - 1 && <Arrow />}
+          </React.Fragment>
         ))}
-      </div>
-
-      {/* Written explanation */}
-      <div style={{ ...panel, marginTop: "1.25rem" }}>
-        <div className="text-sm font-semibold mb-3" style={{ color: "var(--color-text)" }}>How it works</div>
-        <div className="text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
-          A payment failure event is loaded from the database. The agent calls up to three read-only
-          tools to gather customer history, retry attempt counts, and failure details. It sends this
-          context to the LLM, which returns a structured decision — one of{" "}
-          <strong className="font-semibold" style={{ color: "var(--color-text)" }}>retry</strong>,{" "}
-          <strong className="font-semibold" style={{ color: "var(--color-text)" }}>send_reminder</strong>,{" "}
-          <strong className="font-semibold" style={{ color: "var(--color-text)" }}>escalate_to_human</strong>, or{" "}
-          <strong className="font-semibold" style={{ color: "var(--color-text)" }}>stop_pursuing</strong>{" "}
-          — with a confidence score and plain-language reasoning.
-        </div>
-        <div className="text-sm leading-relaxed mt-3" style={{ color: "var(--color-muted)" }}>
-          Before any action reaches a customer,{" "}
-          <strong className="font-semibold" style={{ color: "var(--color-text)" }}>rules.py</strong>{" "}
-          evaluates three deterministic guardrails: if the retry limit is already exhausted, if the
-          payment exceeds the automatic recovery threshold, or if the customer has no prior history.
-          When a rule fires, the LLM's proposal is overridden and the substituted action is recorded
-          alongside the original proposal in the audit log — so every outcome is fully explainable.
-        </div>
       </div>
     </div>
   );

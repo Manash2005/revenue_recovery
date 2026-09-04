@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { fetchAuditLog } from "../data/api.js";
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
@@ -10,7 +10,7 @@ const ACTION = {
 };
 
 const FILTERS = [
-  { key: "all",               label: "All" },
+  { key: "all",               label: "All Actions" },
   { key: "retry",             label: "Retry" },
   { key: "send_reminder",     label: "Send Reminder" },
   { key: "escalate_to_human", label: "Escalate" },
@@ -25,13 +25,6 @@ function fmtAmt(n, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
 }
 
-function fmtTs(ts) {
-  if (!ts) return "—";
-  const d = new Date(ts);
-  if (isNaN(d)) return ts;
-  return d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
-}
-
 function confColor(v) {
   if (v >= 0.85) return "var(--color-green)";
   if (v >= 0.60) return "var(--color-amber)";
@@ -43,6 +36,15 @@ function matches(row, f) {
   if (f === "overridden")   return !!row.rule_override;
   if (f === "human_review") return !!row.human_review_required;
   return row.final_action === f;
+}
+
+// Map common failure reasons to colors
+function reasonColor(reason) {
+  const r = (reason || "").toLowerCase();
+  if (r.includes("fund") || r.includes("balance")) return { bg: "rgba(240,169,82,0.12)", color: "var(--color-amber)", border: "rgba(240,169,82,0.3)" };
+  if (r.includes("fraud") || r.includes("stolen") || r.includes("block")) return { bg: "rgba(224,96,96,0.12)", color: "var(--color-red)", border: "rgba(224,96,96,0.3)" };
+  if (r.includes("expired") || r.includes("date")) return { bg: "rgba(79,142,247,0.12)", color: "var(--color-accent)", border: "rgba(79,142,247,0.3)" };
+  return { bg: "rgba(255,255,255,0.04)", color: "var(--color-muted)", border: "var(--color-border-light)" };
 }
 
 /* ── Sub-components ──────────────────────────────────────────────────────── */
@@ -83,7 +85,6 @@ function ConfBar({ value }) {
   );
 }
 
-/* ── Key column: Final vs LLM ────────────────────────────────────────────── */
 function ActionDelta({ llmAction, finalAction }) {
   if (llmAction === finalAction) {
     return <td className="px-4 py-3"><Badge action={finalAction} /></td>;
@@ -119,10 +120,7 @@ function DetailRow({ row, colSpan }) {
   const override = row.rule_override;
   const tools    = row.tool_calls ?? [];
 
-  const colStyle = {
-    padding: "0 1.5rem",
-    borderRight: "1px solid var(--color-border-light)",
-  };
+  const colStyle = { padding: "0 1.5rem", borderRight: "1px solid var(--color-border-light)" };
 
   return (
     <tr>
@@ -140,9 +138,7 @@ function DetailRow({ row, colSpan }) {
         >
           {/* LLM reasoning */}
           <div style={colStyle}>
-            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
-              LLM Reasoning
-            </div>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>LLM Reasoning</div>
             <div className="text-sm leading-relaxed italic" style={{ color: "var(--color-muted)", whiteSpace: "normal", wordBreak: "break-word" }}>
               {llm.reasoning ?? "No reasoning recorded."}
             </div>
@@ -162,17 +158,13 @@ function DetailRow({ row, colSpan }) {
                 </div>
               </div>
             ) : (
-              <div className="text-sm" style={{ color: "var(--color-muted)" }}>
-                None — LLM proposal accepted as-is
-              </div>
+              <div className="text-sm" style={{ color: "var(--color-muted)" }}>None — LLM proposal accepted as-is</div>
             )}
           </div>
 
           {/* Payment context */}
           <div style={colStyle}>
-            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
-              Payment Context
-            </div>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>Payment Context</div>
             <div className="flex flex-col gap-1">
               {[
                 ["Payment ID",    ev.payment_id],
@@ -190,18 +182,12 @@ function DetailRow({ row, colSpan }) {
 
           {/* Tool calls */}
           <div style={{ padding: "0 0 0 1.5rem" }}>
-            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
-              Tool Calls ({tools.length})
-            </div>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>Tool Calls ({tools.length})</div>
             <div className="flex flex-col gap-1">
               {tools.length === 0
                 ? <span className="text-sm" style={{ color: "var(--color-muted)" }}>No tools called</span>
                 : tools.map((t, i) => (
-                  <span
-                    key={i}
-                    className="text-xs px-2 py-0.5 rounded self-start"
-                    style={{ color: "var(--color-accent)", background: "var(--color-accent-dim)" }}
-                  >
+                  <span key={i} className="text-xs px-2 py-0.5 rounded self-start" style={{ color: "var(--color-accent)", background: "var(--color-accent-dim)" }}>
                     {t.tool_name}
                   </span>
                 ))
@@ -236,12 +222,16 @@ function SkeletonRow({ cols }) {
 }
 
 /* ── Table header cell ───────────────────────────────────────────────────── */
-function TH({ children, highlight, style }) {
+function TH({ children, sortKey, currentSort, onSort, style }) {
+  const isActive = currentSort.key === sortKey;
+  const isAsc = currentSort.dir === "asc";
+
   return (
     <th
-      className="px-4 py-3 text-left text-xs font-semibold tracking-widest uppercase whitespace-nowrap"
+      onClick={sortKey ? () => onSort(sortKey) : undefined}
+      className={`px-4 py-3 text-left text-xs font-semibold tracking-widest uppercase whitespace-nowrap ${sortKey ? 'cursor-pointer hover:text-white transition-colors' : ''}`}
       style={{
-        color: highlight ? "var(--color-text)" : "var(--color-muted)",
+        color: isActive ? "var(--color-text)" : "var(--color-muted)",
         borderBottom: "1px solid var(--color-border)",
         position: "sticky",
         top: 0,
@@ -252,7 +242,14 @@ function TH({ children, highlight, style }) {
         ...style,
       }}
     >
-      {children}
+      <div className="flex items-center gap-1.5">
+        {children}
+        {sortKey && (
+          <span style={{ color: isActive ? "var(--color-accent)" : "transparent", fontSize: "0.7rem" }}>
+            {isActive ? (isAsc ? "▲" : "▼") : "▲"}
+          </span>
+        )}
+      </div>
     </th>
   );
 }
@@ -266,6 +263,7 @@ export default function AuditLogTable() {
   const [error, setError]       = useState(null);
   const [filter, setFilter]     = useState("all");
   const [expanded, setExpanded] = useState(new Set());
+  const [sortConfig, setSortConfig] = useState({ key: "id", dir: "desc" });
 
   useEffect(() => {
     fetchAuditLog()
@@ -281,7 +279,43 @@ export default function AuditLogTable() {
     });
   }, []);
 
-  const filtered    = rows.filter((r) => matches(r, filter));
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      dir: prev.key === key && prev.dir === "desc" ? "asc" : "desc"
+    }));
+  };
+
+  const filtered = useMemo(() => {
+    let result = rows.filter((r) => matches(r, filter));
+    
+    // Sort
+    result.sort((a, b) => {
+      let valA, valB;
+      
+      switch(sortConfig.key) {
+        case 'id':
+          valA = a.id; valB = b.id; break;
+        case 'event_id':
+          valA = a.event?.event_id; valB = b.event?.event_id; break;
+        case 'action':
+          valA = a.final_action; valB = b.final_action; break;
+        case 'amount':
+          valA = a.event?.amount; valB = b.event?.amount; break;
+        case 'confidence':
+          valA = a.llm_proposal?.confidence; valB = b.llm_proposal?.confidence; break;
+        default:
+          valA = 0; valB = 0;
+      }
+      
+      if (valA < valB) return sortConfig.dir === 'asc' ? -1 : 1;
+      if (valA > valB) return sortConfig.dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    
+    return result;
+  }, [rows, filter, sortConfig]);
+
   const overriddenN = rows.filter((r) => r.rule_override).length;
 
   return (
@@ -289,22 +323,26 @@ export default function AuditLogTable() {
 
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex gap-2 flex-wrap">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className="text-sm font-medium px-4 py-1.5 rounded-full border transition-all duration-150"
-              style={{
-                background:   filter === f.key ? "var(--color-accent-dim)"  : "var(--color-panel)",
-                color:        filter === f.key ? "var(--color-accent)"       : "var(--color-muted)",
-                borderColor:  filter === f.key ? "rgba(79,142,247,0.3)"      : "var(--color-border)",
-              }}
-            >
-              {f.label}
-              {f.key === "overridden" && !loading && ` (${overriddenN})`}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <label className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--color-muted)" }}>
+            Filter View
+          </label>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-3 py-1.5 text-sm rounded outline-none transition-colors"
+            style={{
+              background: "var(--color-panel)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-text)",
+            }}
+          >
+            {FILTERS.map(f => (
+              <option key={f.key} value={f.key}>
+                {f.label} {f.key === "overridden" && !loading ? `(${overriddenN})` : ""}
+              </option>
+            ))}
+          </select>
         </div>
         {!loading && !error && (
           <span className="text-sm" style={{ color: "var(--color-muted)" }}>
@@ -333,15 +371,15 @@ export default function AuditLogTable() {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <TH style={{ width: "2.5rem" }} />
-                  <TH>Event ID</TH>
-                  <TH>Event Type</TH>
-                  <TH>Customer</TH>
-                  <TH highlight>Final Action vs LLM Proposal</TH>
-                  <TH>Amount</TH>
-                  <TH>Failure Reason</TH>
-                  <TH>LLM Confidence</TH>
-                  <TH>Human Review</TH>
+                  <TH style={{ width: "2.5rem" }} currentSort={sortConfig} onSort={handleSort} />
+                  <TH sortKey="event_id" currentSort={sortConfig} onSort={handleSort}>Event ID</TH>
+                  <TH sortKey="event_type" currentSort={sortConfig} onSort={handleSort}>Event Type</TH>
+                  <TH sortKey="customer_id" currentSort={sortConfig} onSort={handleSort}>Customer</TH>
+                  <TH sortKey="action" currentSort={sortConfig} onSort={handleSort} highlight>Final Action vs LLM Proposal</TH>
+                  <TH sortKey="amount" currentSort={sortConfig} onSort={handleSort}>Amount</TH>
+                  <TH sortKey="failure_reason" currentSort={sortConfig} onSort={handleSort}>Failure Reason</TH>
+                  <TH sortKey="confidence" currentSort={sortConfig} onSort={handleSort}>LLM Confidence</TH>
+                  <TH sortKey="human_review" currentSort={sortConfig} onSort={handleSort}>Human Review</TH>
                 </tr>
               </thead>
               <tbody>
@@ -351,6 +389,8 @@ export default function AuditLogTable() {
                     const isOpen = expanded.has(row.id);
                     const ev     = row.event ?? {};
                     const llm    = row.llm_proposal ?? {};
+                    
+                    const reasonStyle = reasonColor(ev.failure_reason);
 
                     return (
                       <React.Fragment key={row.id}>
@@ -380,10 +420,7 @@ export default function AuditLogTable() {
                           </td>
 
                           {/* Event ID */}
-                          <td
-                            className="px-4 py-3 text-xs"
-                            style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
-                          >
+                          <td className="px-4 py-3 text-xs" style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}>
                             {ev.event_id ?? "—"}
                           </td>
 
@@ -393,10 +430,7 @@ export default function AuditLogTable() {
                           </td>
 
                           {/* Customer */}
-                          <td
-                            className="px-4 py-3 text-sm"
-                            style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}
-                          >
+                          <td className="px-4 py-3 text-sm" style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}>
                             {ev.customer_id ?? "—"}
                           </td>
 
@@ -405,10 +439,7 @@ export default function AuditLogTable() {
 
                           {/* Amount */}
                           <td className="px-4 py-3">
-                            <span
-                              className="text-base font-bold"
-                              style={{ fontFamily: "var(--font-serif)" }}
-                            >
+                            <span className="text-base font-bold" style={{ fontFamily: "var(--font-serif)" }}>
                               {fmtAmt(ev.amount, ev.currency)}
                             </span>
                           </td>
@@ -416,18 +447,15 @@ export default function AuditLogTable() {
                           {/* Failure reason */}
                           <td className="px-4 py-3">
                             <span
-                              className="text-sm px-2.5 py-1 rounded overflow-hidden whitespace-nowrap"
+                              className="text-[0.72rem] font-medium px-2 py-0.5 rounded whitespace-nowrap"
                               style={{
-                                display: "inline-block",
-                                maxWidth: "200px",
-                                textOverflow: "ellipsis",
-                                color: "var(--color-muted)",
-                                background: "rgba(255,255,255,0.04)",
-                                border: "1px solid var(--color-border-light)",
+                                background: reasonStyle.bg,
+                                color: reasonStyle.color,
+                                border: `1px solid ${reasonStyle.border}`
                               }}
                               title={ev.failure_reason}
                             >
-                              {ev.failure_reason ?? "—"}
+                              {(ev.failure_reason ?? "—").replaceAll("_", " ")}
                             </span>
                           </td>
 
@@ -439,10 +467,7 @@ export default function AuditLogTable() {
                           {/* Human review */}
                           <td className="px-4 py-3">
                             {row.human_review_required ? (
-                              <span
-                                className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                                style={{ background: "rgba(240,169,82,0.12)", color: "var(--color-amber)" }}
-                              >
+                              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(240,169,82,0.12)", color: "var(--color-amber)" }}>
                                 Required
                               </span>
                             ) : (
