@@ -1,9 +1,11 @@
 """Endpoints for audit logs and recovery summary metrics."""
 
 from collections import Counter
+import sqlite3
 
 from fastapi import APIRouter
 
+from backend.app.models.db_models import DB_PATH
 from backend.app.services.compute_metrics import (
 	RECOVERABLE_ACTIONS,
 	calculate_metrics,
@@ -22,6 +24,10 @@ def get_metrics_summary() -> dict:
 	audit_records = load_audit_records()
 	ground_truth = load_ground_truth()
 	metrics = calculate_metrics(audit_records, ground_truth)
+	with sqlite3.connect(DB_PATH) as connection:
+		total_data = connection.execute(
+			"SELECT COUNT(*) FROM payment_events"
+		).fetchone()[0]
 
 	action_breakdown = Counter(
 		record["final_action"] for record in audit_records
@@ -45,7 +51,8 @@ def get_metrics_summary() -> dict:
 	)
 
 	return {
-		"total_events": len(audit_records),
+		"total_events": total_data,
+		"audited_events": len(audit_records),
 		"action_breakdown": dict(action_breakdown),
 		"revenue_recovered": recovery_opportunity_amount,
 		"false_positive_rate": false_positive_rate,

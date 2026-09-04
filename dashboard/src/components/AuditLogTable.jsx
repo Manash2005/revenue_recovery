@@ -3,10 +3,10 @@ import { fetchAuditLog } from "../data/api.js";
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 const ACTION = {
-  retry:             { label: "Retry",         cls: "retry",    dotCls: "badge-dot-retry"    },
-  send_reminder:     { label: "Send Reminder", cls: "reminder", dotCls: "badge-dot-reminder" },
-  escalate_to_human: { label: "Escalate",      cls: "escalate", dotCls: "badge-dot-escalate" },
-  stop_pursuing:     { label: "Stop Pursuing", cls: "stop",     dotCls: "badge-dot-stop"     },
+  retry:             { label: "Retry",         bg: "rgba(62,207,142,0.12)",  color: "var(--color-green)"  },
+  send_reminder:     { label: "Send Reminder", bg: "rgba(79,142,247,0.12)",  color: "var(--color-accent)" },
+  escalate_to_human: { label: "Escalate",      bg: "rgba(240,169,82,0.12)",  color: "var(--color-amber)"  },
+  stop_pursuing:     { label: "Stop Pursuing", bg: "rgba(224,96,96,0.12)",   color: "var(--color-red)"    },
 };
 
 const FILTERS = [
@@ -20,82 +20,91 @@ const FILTERS = [
 ];
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
-function fmtAmt(amount, currency = "USD") {
-  if (amount == null) return "—";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency", currency, maximumFractionDigits: 0,
-  }).format(amount);
+function fmtAmt(n, currency = "USD") {
+  if (n == null) return "—";
+  return new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
 }
 
 function fmtTs(ts) {
   if (!ts) return "—";
   const d = new Date(ts);
   if (isNaN(d)) return ts;
-  return d.toLocaleString("en-US", {
-    month: "short", day: "numeric",
-    hour: "2-digit", minute: "2-digit", hour12: false,
-  });
+  return d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
 function confColor(v) {
-  if (v >= 0.85) return "var(--green)";
-  if (v >= 0.60) return "var(--amber)";
-  return "var(--red)";
+  if (v >= 0.85) return "var(--color-green)";
+  if (v >= 0.60) return "var(--color-amber)";
+  return "var(--color-red)";
 }
 
-function matchesFilter(row, f) {
+function matches(row, f) {
   if (f === "all")          return true;
   if (f === "overridden")   return !!row.rule_override;
   if (f === "human_review") return !!row.human_review_required;
   return row.final_action === f;
 }
 
-/* ── Action badge ────────────────────────────────────────────────────────── */
+/* ── Sub-components ──────────────────────────────────────────────────────── */
 function Badge({ action, small }) {
-  const cfg = ACTION[action] ?? { label: action, cls: "stop", dotCls: "badge-dot-stop" };
+  const cfg = ACTION[action] ?? { label: action, bg: "rgba(255,255,255,0.06)", color: "var(--color-muted)" };
   return (
     <span
-      className={`badge badge-${cfg.cls}`}
-      style={small ? { fontSize: "0.68rem", padding: "2px 8px" } : {}}
+      className="inline-flex items-center gap-1.5 font-semibold rounded-full whitespace-nowrap"
+      style={{
+        background: cfg.bg,
+        color: cfg.color,
+        fontSize: small ? "0.68rem" : "0.74rem",
+        padding: small ? "2px 8px" : "3px 11px",
+      }}
     >
-      <span className={`badge-dot ${cfg.dotCls}`} />
+      <span
+        className="rounded-full flex-shrink-0"
+        style={{ width: 6, height: 6, background: cfg.color }}
+      />
       {cfg.label}
     </span>
   );
 }
 
-/* ── Confidence bar ──────────────────────────────────────────────────────── */
 function ConfBar({ value }) {
-  if (value == null) return <span className="dim">—</span>;
+  if (value == null) return <span style={{ color: "var(--color-muted)" }}>—</span>;
   const pct   = Math.round(value * 100);
   const color = confColor(value);
   return (
-    <div className="conf-bar">
-      <span className="conf-pct" style={{ color }}>{pct}%</span>
-      <div className="bar-track" style={{ width: "100%" }}>
-        <div className="bar-fill" style={{ width: `${pct}%`, background: color }} />
+    <div className="flex flex-col gap-1" style={{ minWidth: "90px" }}>
+      <span className="text-sm font-semibold" style={{ fontVariantNumeric: "tabular-nums", color }}>
+        {pct}%
+      </span>
+      <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
       </div>
     </div>
   );
 }
 
-/* ── The key column: Final action vs LLM proposal ────────────────────────── */
+/* ── Key column: Final vs LLM ────────────────────────────────────────────── */
 function ActionDelta({ llmAction, finalAction }) {
   if (llmAction === finalAction) {
-    return (
-      <td>
-        <Badge action={finalAction} />
-      </td>
-    );
+    return <td className="px-4 py-3"><Badge action={finalAction} /></td>;
   }
   return (
-    <td>
-      <div className="action-cell">
-        <div className="action-cell-row">
+    <td className="px-4 py-3">
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2">
           <Badge action={finalAction} />
-          <span className="gated-label">Rule gated</span>
+          <span
+            className="text-xs font-semibold px-2 py-0.5 rounded"
+            style={{
+              color: "var(--color-amber)",
+              background: "rgba(240,169,82,0.1)",
+              border: "1px solid rgba(240,169,82,0.2)",
+            }}
+          >
+            Rule gated
+          </span>
         </div>
-        <div className="llm-proposed">
+        <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--color-muted)" }}>
           LLM wanted: <Badge action={llmAction} small />
         </div>
       </div>
@@ -103,81 +112,102 @@ function ActionDelta({ llmAction, finalAction }) {
   );
 }
 
-/* ── Expanded detail ─────────────────────────────────────────────────────── */
+/* ── Expanded detail row ─────────────────────────────────────────────────── */
 function DetailRow({ row, colSpan }) {
   const ev       = row.event ?? {};
   const llm      = row.llm_proposal ?? {};
   const override = row.rule_override;
   const tools    = row.tool_calls ?? [];
 
-  return (
-    <tr className="detail-row">
-      <td colSpan={colSpan}>
-        <div className="detail-inner">
+  const colStyle = {
+    padding: "0 1.5rem",
+    borderRight: "1px solid var(--color-border-light)",
+  };
 
+  return (
+    <tr>
+      <td colSpan={colSpan} style={{ padding: 0 }}>
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: "repeat(4, 1fr)",
+            borderTop: "2px solid var(--color-accent-dim)",
+            background: "rgba(10,14,22,0.55)",
+            borderBottom: "1px solid var(--color-border)",
+            padding: "1.25rem 1.5rem",
+            gap: 0,
+          }}
+        >
           {/* LLM reasoning */}
-          <div className="detail-col">
-            <div className="detail-col-label">LLM Reasoning</div>
-            <div className="detail-col-value italic">
+          <div style={colStyle}>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
+              LLM Reasoning
+            </div>
+            <div className="text-sm leading-relaxed italic" style={{ color: "var(--color-muted)", whiteSpace: "normal", wordBreak: "break-word" }}>
               {llm.reasoning ?? "No reasoning recorded."}
             </div>
           </div>
 
           {/* Rule override */}
-          <div className="detail-col">
-            <div className="detail-col-label">
+          <div style={colStyle}>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
               {override ? "Rule Override Applied" : "Rule Override"}
             </div>
             {override ? (
-              <div className="detail-col-value">
-                <div className="override-applied">{override.rule}</div>
-                <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>
-                  {override.reason}
-                </div>
-                <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-                  LLM proposed <Badge action={llm.action} small /> — rules changed to <Badge action={row.final_action} small />
+              <div className="text-sm leading-relaxed" style={{ whiteSpace: "normal" }}>
+                <div className="font-bold mb-1" style={{ color: "var(--color-amber)" }}>{override.rule}</div>
+                <div className="mb-2" style={{ color: "var(--color-muted)" }}>{override.reason}</div>
+                <div className="flex items-center gap-1 flex-wrap" style={{ color: "var(--color-muted)", fontSize: "0.78rem" }}>
+                  LLM proposed <Badge action={llm.action} small /> — changed to <Badge action={row.final_action} small />
                 </div>
               </div>
             ) : (
-              <div className="detail-col-value" style={{ color: "var(--text-muted)" }}>
+              <div className="text-sm" style={{ color: "var(--color-muted)" }}>
                 None — LLM proposal accepted as-is
               </div>
             )}
           </div>
 
           {/* Payment context */}
-          <div className="detail-col">
-            <div className="detail-col-label">Payment Context</div>
-            <div className="detail-col-value">
+          <div style={colStyle}>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
+              Payment Context
+            </div>
+            <div className="flex flex-col gap-1">
               {[
-                ["Payment ID",   ev.payment_id],
-                ["Retries",      `${ev.retry_count ?? 0} / ${ev.max_retries ?? "—"}`],
+                ["Payment ID",    ev.payment_id],
+                ["Retries",       `${ev.retry_count ?? 0} / ${ev.max_retries ?? "—"}`],
                 ["History depth", ev.customer_history_depth],
-                ["Currency",     ev.currency],
+                ["Currency",      ev.currency],
               ].map(([k, v]) => (
-                <div className="detail-kv" key={k}>
-                  <span className="detail-kv-key">{k}</span>
-                  <span className="detail-kv-val">{v ?? "—"}</span>
+                <div key={k} className="flex justify-between gap-4 text-sm">
+                  <span style={{ color: "var(--color-muted)" }}>{k}</span>
+                  <span style={{ fontVariantNumeric: "tabular-nums", color: "var(--color-text)" }}>{v ?? "—"}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Tools */}
-          <div className="detail-col">
-            <div className="detail-col-label">Tool Calls ({tools.length})</div>
-            <div className="detail-col-value">
+          {/* Tool calls */}
+          <div style={{ padding: "0 0 0 1.5rem" }}>
+            <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--color-faint)" }}>
+              Tool Calls ({tools.length})
+            </div>
+            <div className="flex flex-col gap-1">
               {tools.length === 0
-                ? <span style={{ color: "var(--text-muted)" }}>No tools called</span>
+                ? <span className="text-sm" style={{ color: "var(--color-muted)" }}>No tools called</span>
                 : tools.map((t, i) => (
-                  <div key={i} style={{ marginBottom: "0.2rem" }}>
-                    <span className="tool-chip">{t.tool_name}</span>
-                  </div>
+                  <span
+                    key={i}
+                    className="text-xs px-2 py-0.5 rounded self-start"
+                    style={{ color: "var(--color-accent)", background: "var(--color-accent-dim)" }}
+                  >
+                    {t.tool_name}
+                  </span>
                 ))
               }
             </div>
           </div>
-
         </div>
       </td>
     </tr>
@@ -189,18 +219,41 @@ function SkeletonRow({ cols }) {
   return (
     <tr>
       {Array.from({ length: cols }).map((_, i) => (
-        <td key={i} style={{ padding: "0.85rem 1.1rem" }}>
+        <td key={i} className="px-4 py-3">
           <div
-            className="skel"
+            className="rounded animate-pulse-custom"
             style={{
               height: "0.75rem",
-              width: i === 4 ? "130px" : "72px",
+              width: i === 4 ? "130px" : "70px",
+              background: "rgba(255,255,255,0.06)",
               animationDelay: `${i * 0.06}s`,
             }}
           />
         </td>
       ))}
     </tr>
+  );
+}
+
+/* ── Table header cell ───────────────────────────────────────────────────── */
+function TH({ children, highlight, style }) {
+  return (
+    <th
+      className="px-4 py-3 text-left text-xs font-semibold tracking-widest uppercase whitespace-nowrap"
+      style={{
+        color: highlight ? "var(--color-text)" : "var(--color-muted)",
+        borderBottom: "1px solid var(--color-border)",
+        position: "sticky",
+        top: 0,
+        background: "rgba(13,17,23,0.92)",
+        backdropFilter: "blur(20px)",
+        zIndex: 2,
+        userSelect: "none",
+        ...style,
+      }}
+    >
+      {children}
+    </th>
   );
 }
 
@@ -228,19 +281,25 @@ export default function AuditLogTable() {
     });
   }, []);
 
-  const filtered     = rows.filter((r) => matchesFilter(r, filter));
-  const overriddenN  = rows.filter((r) => r.rule_override).length;
+  const filtered    = rows.filter((r) => matches(r, filter));
+  const overriddenN = rows.filter((r) => r.rule_override).length;
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
+
       {/* Toolbar */}
-      <div className="audit-toolbar">
-        <div className="filter-group">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {FILTERS.map((f) => (
             <button
               key={f.key}
-              className={`filter-btn${filter === f.key ? " active" : ""}`}
               onClick={() => setFilter(f.key)}
+              className="text-sm font-medium px-4 py-1.5 rounded-full border transition-all duration-150"
+              style={{
+                background:   filter === f.key ? "var(--color-accent-dim)"  : "var(--color-panel)",
+                color:        filter === f.key ? "var(--color-accent)"       : "var(--color-muted)",
+                borderColor:  filter === f.key ? "rgba(79,142,247,0.3)"      : "var(--color-border)",
+              }}
             >
               {f.label}
               {f.key === "overridden" && !loading && ` (${overriddenN})`}
@@ -248,37 +307,46 @@ export default function AuditLogTable() {
           ))}
         </div>
         {!loading && !error && (
-          <span className="entry-count">{filtered.length} entries</span>
+          <span className="text-sm" style={{ color: "var(--color-muted)" }}>
+            {filtered.length} entries
+          </span>
         )}
       </div>
 
       {/* Table */}
-      <div className="table-panel">
+      <div
+        className="overflow-hidden"
+        style={{
+          background: "var(--color-panel)",
+          border: "1px solid var(--color-border)",
+          borderRadius: "var(--radius-md)",
+          boxShadow: "var(--shadow-panel)",
+          backdropFilter: "blur(20px)",
+        }}
+      >
         {error ? (
-          <div style={{ padding: "2rem", color: "var(--red)", fontSize: "0.9rem" }}>
+          <div className="p-8 text-sm" style={{ color: "var(--color-red)" }}>
             Failed to load audit log: {error}
           </div>
         ) : (
-          <div className="table-scroll">
-            <table>
+          <div className="overflow-y-auto scrollbar-thin" style={{ maxHeight: "70vh" }}>
+            <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th style={{ width: "2rem" }} />
-                  <th>Event ID</th>
-                  <th>Event Type</th>
-                  <th>Customer</th>
-                  <th className="key-col">Final Action vs LLM Proposal</th>
-                  <th>Amount</th>
-                  <th>Failure Reason</th>
-                  <th>LLM Confidence</th>
-                  <th>Human Review</th>
+                  <TH style={{ width: "2.5rem" }} />
+                  <TH>Event ID</TH>
+                  <TH>Event Type</TH>
+                  <TH>Customer</TH>
+                  <TH highlight>Final Action vs LLM Proposal</TH>
+                  <TH>Amount</TH>
+                  <TH>Failure Reason</TH>
+                  <TH>LLM Confidence</TH>
+                  <TH>Human Review</TH>
                 </tr>
               </thead>
               <tbody>
                 {loading
-                  ? Array.from({ length: 8 }).map((_, i) => (
-                    <SkeletonRow key={i} cols={COLS} />
-                  ))
+                  ? Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} cols={COLS} />)
                   : filtered.map((row) => {
                     const isOpen = expanded.has(row.id);
                     const ev     = row.event ?? {};
@@ -286,59 +354,101 @@ export default function AuditLogTable() {
 
                     return (
                       <React.Fragment key={row.id}>
-                        <tr className={isOpen ? "expanded" : ""}>
-
-                          {/* Expand toggle */}
-                          <td style={{ padding: "0.85rem 0.5rem 0.85rem 1.1rem" }}>
+                        <tr
+                          style={{
+                            borderBottom: isOpen ? "none" : "1px solid var(--color-border-light)",
+                            background:   isOpen ? "rgba(79,142,247,0.04)" : "transparent",
+                            transition:   "background 0.12s",
+                          }}
+                          onMouseEnter={(e) => { if (!isOpen) e.currentTarget.style.background = "var(--color-panel-hover)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = isOpen ? "rgba(79,142,247,0.04)" : "transparent"; }}
+                        >
+                          {/* Expand */}
+                          <td className="pl-4 py-3">
                             <button
-                              className="expand-btn"
                               onClick={() => toggle(row.id)}
-                              title={isOpen ? "Collapse" : "Show reasoning and detail"}
+                              title={isOpen ? "Collapse" : "View reasoning"}
+                              className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold transition-all duration-150"
+                              style={{
+                                border:      "1px solid var(--color-border)",
+                                background:  isOpen ? "var(--color-accent-dim)" : "none",
+                                color:       isOpen ? "var(--color-accent)"     : "var(--color-muted)",
+                              }}
                             >
                               {isOpen ? "−" : "+"}
                             </button>
                           </td>
 
                           {/* Event ID */}
-                          <td className="code accent">{ev.event_id ?? "—"}</td>
+                          <td
+                            className="px-4 py-3 text-xs"
+                            style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
+                          >
+                            {ev.event_id ?? "—"}
+                          </td>
 
                           {/* Event type */}
-                          <td className="dim">
-                            {ev.event_type === "payment_failed" ? "Payment Failure" : ev.event_type ?? "—"}
+                          <td className="px-4 py-3 text-sm" style={{ color: "var(--color-muted)" }}>
+                            {ev.event_type === "payment_failed" ? "Payment Failure" : (ev.event_type ?? "—")}
                           </td>
 
                           {/* Customer */}
-                          <td className="dim code">{ev.customer_id ?? "—"}</td>
+                          <td
+                            className="px-4 py-3 text-sm"
+                            style={{ fontFamily: "var(--font-mono)", color: "var(--color-muted)" }}
+                          >
+                            {ev.customer_id ?? "—"}
+                          </td>
 
-                          {/* THE KEY COLUMN */}
-                          <ActionDelta
-                            llmAction={llm.action}
-                            finalAction={row.final_action}
-                          />
+                          {/* Key column */}
+                          <ActionDelta llmAction={llm.action} finalAction={row.final_action} />
 
                           {/* Amount */}
-                          <td>
-                            <span className="amount">{fmtAmt(ev.amount, ev.currency)}</span>
+                          <td className="px-4 py-3">
+                            <span
+                              className="text-base font-bold"
+                              style={{ fontFamily: "var(--font-serif)" }}
+                            >
+                              {fmtAmt(ev.amount, ev.currency)}
+                            </span>
                           </td>
 
                           {/* Failure reason */}
-                          <td>
-                            <span className="reason-chip" title={ev.failure_reason}>
+                          <td className="px-4 py-3">
+                            <span
+                              className="text-sm px-2.5 py-1 rounded overflow-hidden whitespace-nowrap"
+                              style={{
+                                display: "inline-block",
+                                maxWidth: "200px",
+                                textOverflow: "ellipsis",
+                                color: "var(--color-muted)",
+                                background: "rgba(255,255,255,0.04)",
+                                border: "1px solid var(--color-border-light)",
+                              }}
+                              title={ev.failure_reason}
+                            >
                               {ev.failure_reason ?? "—"}
                             </span>
                           </td>
 
                           {/* Confidence */}
-                          <td><ConfBar value={llm.confidence} /></td>
-
-                          {/* Human review */}
-                          <td>
-                            {row.human_review_required
-                              ? <span className="review-pill required">Required</span>
-                              : <span className="review-pill none">No</span>
-                            }
+                          <td className="px-4 py-3">
+                            <ConfBar value={llm.confidence} />
                           </td>
 
+                          {/* Human review */}
+                          <td className="px-4 py-3">
+                            {row.human_review_required ? (
+                              <span
+                                className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                                style={{ background: "rgba(240,169,82,0.12)", color: "var(--color-amber)" }}
+                              >
+                                Required
+                              </span>
+                            ) : (
+                              <span className="text-sm" style={{ color: "var(--color-faint)" }}>No</span>
+                            )}
+                          </td>
                         </tr>
 
                         {isOpen && <DetailRow row={row} colSpan={COLS} />}
@@ -349,7 +459,7 @@ export default function AuditLogTable() {
 
                 {!loading && !error && filtered.length === 0 && (
                   <tr>
-                    <td colSpan={COLS} style={{ textAlign:"center", padding:"2.5rem", color:"var(--text-muted)" }}>
+                    <td colSpan={COLS} className="px-4 py-10 text-center text-sm" style={{ color: "var(--color-muted)" }}>
                       No entries match this filter.
                     </td>
                   </tr>

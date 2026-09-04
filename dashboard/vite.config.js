@@ -1,14 +1,16 @@
-// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    tailwindcss(),
+    react(),
+  ],
   server: {
     port: 5173,
     open: true,
     proxy: {
-      // Forward /api/* → FastAPI backend at http://localhost:8000
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
