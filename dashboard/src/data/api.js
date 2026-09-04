@@ -3,7 +3,7 @@
  * ------
  * Thin fetch wrappers for the FastAPI backend.
  *
- * Backend base: http://localhost:8000  (proxied via Vite → /api)
+ * Backend base: VITE_API_BASE_URL in production, or the Vite proxy locally.
  *
  * Endpoints:
  *   GET /api/metrics/summary  → MetricsSummary
@@ -11,7 +11,8 @@
  *   GET /api/failure-case     → FailureCaseDoc
  */
 
-const BASE = "/api";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const BASE = `${API_BASE_URL}/api`;
 
 async function fetchJSON(path) {
   const res = await fetch(`${BASE}${path}`);
