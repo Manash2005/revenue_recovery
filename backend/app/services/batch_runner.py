@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DB_PATH = PROJECT_ROOT / "data" / "synthetic_events.db"
 
 
-BATCH_SIZE = 20
+BATCH_SIZE = 50
 
 
 def load_events() -> list[dict]:

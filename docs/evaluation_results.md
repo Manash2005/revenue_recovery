@@ -2,31 +2,31 @@
 
 ## Summary
 
-**Total events evaluated:** 15
+**Total events evaluated:** 100
 
 ## Confusion Matrix
 
 | Metric | Count |
 |---|---:|
-| True Positives | 9 |
-| True Negatives | 3 |
-| False Positives | 0 |
-| False Negatives | 3 |
+| True Positives | 64 |
+| True Negatives | 16 |
+| False Positives | 1 |
+| False Negatives | 19 |
 
 ## Classification Metrics
 
 | Metric | Value |
 |---|---:|
-| Precision | 100.00% |
-| Recall | 75.00% |
-| F1 Score | 85.71% |
+| Precision | 98.46% |
+| Recall | 77.11% |
+| F1 Score | 86.49% |
 
 ## Error Cost
 
 | Error Type | Cost |
 |---|---:|
-| False Positive Cost | 0.00 |
-| False Negative Cost | 1667.90 |
+| False Positive Cost | 360.54 |
+| False Negative Cost | 10117.17 |
 
 ## Interpretation
 
