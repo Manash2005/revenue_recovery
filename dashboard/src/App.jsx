@@ -4,12 +4,14 @@ import MetricsPanel       from "./components/MetricsPanel.jsx";
 import AuditLogTable      from "./components/AuditLogTable.jsx";
 import FailureCaseCallout from "./components/FailureCaseCallout.jsx";
 import ArchitectureFlow   from "./components/ArchitectureFlow.jsx";
+import SingleEventEvaluator from "./components/SingleEventEvaluator.jsx";
 
 const TABS = [
   { id: "overview",     label: "Overview"         },
   { id: "audit",        label: "Audit Log"        },
   { id: "failure",      label: "Failure Case"     },
   { id: "architecture", label: "Architecture"     },
+  { id: "evaluate",     label: "Evaluate Event"   },
 ];
 
 export default function App() {
@@ -54,6 +56,7 @@ export default function App() {
         {tab === "audit"        && <AuditLogTable />}
         {tab === "failure"      && <FailureCaseCallout />}
         {tab === "architecture" && <ArchitectureFlow />}
+        {tab === "evaluate"     && <SingleEventEvaluator />}
       </main>
 
     </div>

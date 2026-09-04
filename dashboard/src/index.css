@@ -142,6 +142,50 @@ html, body, #root {
 .main::-webkit-scrollbar-track { background: transparent; }
 .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
 
+/* ── Single-event evaluator ─────────────────────────────────────────────── */
+.single-event-page { display: flex; flex-direction: column; gap: 1.25rem; }
+.section-intro h1 { font-family: var(--serif); font-size: 1.65rem; margin-bottom: 0.4rem; }
+.section-intro > p:last-child { color: var(--text-muted); font-size: 0.84rem; }
+.single-event-controls {
+  display: flex; align-items: end; gap: 0.75rem; padding: 1rem 1.25rem;
+  background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--r);
+}
+.single-event-controls label { display: flex; flex-direction: column; gap: 0.4rem; color: var(--text-muted); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; flex: 1; }
+.single-event-controls select { width: 100%; min-height: 38px; padding: 0 0.75rem; color: var(--text); background: #151d28; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
+.evaluate-button { min-height: 38px; padding: 0 1rem; color: #07140f; background: var(--green); border: 0; border-radius: 6px; font-size: 0.78rem; font-weight: 700; }
+.evaluate-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.single-event-error { padding: 0.75rem 1rem; color: var(--red); background: rgba(224,96,96,0.08); border: 1px solid rgba(224,96,96,0.2); border-radius: 6px; font-size: 0.82rem; }
+.single-event-summary { padding: 1.25rem; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--r); }
+.single-event-status-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+.event-status { padding: 3px 9px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; }
+.event-status.audited { color: var(--green); background: rgba(62,207,142,0.12); }
+.event-status.unaudited { color: var(--amber); background: rgba(240,169,82,0.12); }
+.single-event-id { color: var(--text); font-family: monospace; font-size: 0.82rem; }
+.single-event-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.single-event-field { display: flex; flex-direction: column; gap: 0.25rem; }
+.single-event-field span { color: var(--text-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.single-event-field strong { color: var(--text); font-size: 0.82rem; font-weight: 500; overflow-wrap: anywhere; }
+.single-event-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.single-event-panel-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; color: var(--text); font-size: 0.78rem; font-weight: 600; }
+.activity-indicator { color: var(--green); font-size: 0.68rem; }
+.friendly-log { min-height: 150px; padding: 0.9rem; color: var(--text-muted); background: rgba(0,0,0,0.18); border: 1px solid var(--border-light); border-radius: 6px; font-size: 0.78rem; line-height: 1.8; }
+.friendly-log > div:not(.log-muted):not(.log-pulse)::before { content: "✓"; margin-right: 0.5rem; color: var(--green); }
+.log-muted { color: var(--text-faint); }
+.log-pulse { color: var(--accent); animation: pulse 1.4s ease-in-out infinite; }
+.decision-result-action { margin-bottom: 0.7rem; color: var(--green); font-family: var(--serif); font-size: 1.45rem; font-weight: 700; }
+.single-event-result p { margin-bottom: 1rem; color: var(--text-muted); font-size: 0.82rem; line-height: 1.6; }
+.single-event-result .single-event-field { flex-direction: row; justify-content: space-between; padding: 0.45rem 0; border-top: 1px solid var(--border-light); }
+.evaluation-category.true_positive { color: var(--green); }
+.evaluation-category.true_negative { color: var(--accent); }
+.evaluation-category.false_positive { color: var(--red); }
+.evaluation-category.false_negative { color: var(--amber); }
+.single-event-audit-note { margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.72rem; line-height: 1.5; }
+
+@media (max-width: 800px) {
+  .single-event-controls, .single-event-columns { grid-template-columns: 1fr; flex-direction: column; align-items: stretch; }
+  .single-event-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ── Section headings ───────────────────────────────────────────────────── */
 .section-heading {
   font-size: 0.72rem;

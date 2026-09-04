@@ -194,10 +194,14 @@ def _normalize_tool_arguments(raw_args):
 # RUN AGENT
 # =========================================================
 
-def run_agent(event: dict) -> AgentResult:
+def run_agent(event: dict, progress_callback=None) -> AgentResult:
     """
     Run the bounded tool-using decision loop.
     """
+
+    def report(message: str, **details) -> None:
+        if progress_callback:
+            progress_callback({"message": message, **details})
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -208,6 +212,7 @@ def run_agent(event: dict) -> AgentResult:
     invalid_attempts = 0
 
     while True:
+        report("Asking the language model to assess the event.", stage="model_request")
         response = client.chat.completions.create(
             model=MODEL,
             messages=messages,
@@ -231,6 +236,12 @@ def run_agent(event: dict) -> AgentResult:
                 if tool_name not in TOOL_FUNCTIONS:
                     raise ValueError(f"Unknown tool requested: {tool_name}")
 
+                report(
+                    f"Tool called: {tool_name}.",
+                    stage="tool_call",
+                    tool_name=tool_name,
+                )
+
                 try:
                     raw_arguments = json.loads(tool_call.function.arguments)
                 except json.JSONDecodeError as exc:
@@ -238,6 +249,12 @@ def run_agent(event: dict) -> AgentResult:
 
                 arguments = _normalize_tool_arguments(raw_arguments)
                 result = TOOL_FUNCTIONS[tool_name](**arguments)
+
+                report(
+                    f"Tool result received from {tool_name}; sending it back to the model.",
+                    stage="tool_result",
+                    tool_name=tool_name,
+                )
 
                 tool_call_records.append(
                     ToolCallRecord(
@@ -296,6 +313,13 @@ def run_agent(event: dict) -> AgentResult:
             continue
 
         final_decision, rule_override, human_review_required = evaluate_guardrails(event, decision)
+
+        report(
+            f"Model decided: {decision.action}. Final action: {final_decision.action}.",
+            stage="decision",
+            proposed_action=decision.action,
+            final_action=final_decision.action,
+        )
 
         return AgentResult(
             llm_proposal=decision,
