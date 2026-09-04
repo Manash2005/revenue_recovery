@@ -11,9 +11,6 @@ venv/
 # Environment
 .env
 
-# SQLite and generated data
-data/*.db
-
 # Node
 node_modules/
 dist/
