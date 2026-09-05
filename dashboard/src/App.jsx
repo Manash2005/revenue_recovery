@@ -124,7 +124,7 @@ function StickyNav({ visible }) {
           className="text-base font-black tracking-tight mr-6 flex-shrink-0"
           style={{ fontFamily: "var(--font-serif)", color: "var(--color-text)" }}
         >
-          Recover
+          Gate <span style={{ color: "var(--color-accent)" }}> Keeper </span>
         </span>
         {NAV.map((item) => (
           <a
@@ -223,7 +223,7 @@ export default function App() {
           className="hero-fade hero-delay-4 text-base leading-relaxed mb-12"
           style={{ color: "var(--color-faint)", maxWidth: "700px" }}
         >
-          Scroll down to see how an AI agent handles 127 real payment failures —
+          Scroll down to see how an AI agent handles real payment failures —
           and why it never gets to act unsupervised.
         </p>
 
@@ -401,7 +401,7 @@ export default function App() {
 
           <Prose delay={0}>
             <h2 className="text-4xl font-black mb-6 leading-tight" style={{ fontFamily: "var(--font-serif)", color: "var(--color-text)" }}>
-              We ran it on 127 real payment failures.
+              We ran it on payment failures.
               <br />
               <span style={{ color: "var(--color-green)" }}>Here's what happened.</span>
             </h2>
