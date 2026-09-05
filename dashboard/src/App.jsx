@@ -574,7 +574,7 @@ export default function App() {
         <div className="section-divider mb-16" />
         <Reveal>
           <div className="text-3xl font-black mb-3" style={{ fontFamily: "var(--font-serif)", color: "var(--color-text)" }}>
-            Recover
+            Gate <span style={{ color: "var(--color-accent)" }}> Keeper </span>
           </div>
           <p className="text-sm mb-2" style={{ color: "var(--color-muted)", maxWidth: "380px", margin: "0 auto 0.5rem" }}>
             AI-powered payment recovery. Bounded by deterministic rules.
