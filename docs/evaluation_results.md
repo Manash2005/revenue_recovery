@@ -2,14 +2,14 @@
 
 ## Summary
 
-**Total events evaluated:** 129
+**Total events evaluated:** 130
 
 ## Confusion Matrix
 
 | Metric | Count |
 |---|---:|
 | True Positives | 85 |
-| True Negatives | 23 |
+| True Negatives | 24 |
 | False Positives | 1 |
 | False Negatives | 20 |
 
@@ -39,6 +39,7 @@ as recoverable when the ground truth considered it non-recoverable.
 False negatives represent cases where the agent classified a payment
 as non-recoverable when the ground truth considered it recoverable.
 
-False-positive cost is particularly important because allowing an
-incorrect recovery action can create greater financial or operational
-risk than unnecessarily stopping or escalating a payment.
+False-negative cost is particularly important because failing to recover
+an eligible payment can result in lost revenue. False-positive cost is
+also tracked because pursuing a non-recoverable payment can create
+customer, operational, or financial risk.

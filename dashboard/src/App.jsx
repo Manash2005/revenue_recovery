@@ -8,10 +8,10 @@ import SingleEventEvaluator from "./components/SingleEventEvaluator.jsx";
 
 const TABS = [
   { id: "overview",     label: "Overview"     },
+  { id: "evaluator",    label: "Evaluator"    },
   { id: "audit",        label: "Audit Log"    },
   { id: "failure",      label: "Failure Case" },
   { id: "architecture", label: "Architecture" },
-  { id: "evaluator",    label: "Evaluator"    },
 ];
 
 export default function App() {
